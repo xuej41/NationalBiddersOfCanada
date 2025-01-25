@@ -6,16 +6,14 @@ import CountdownTimer from "@/app/components/CountdownTimer"
 import BiddingForm from "@/app/components/BiddingForm"
 
 // This data would typically come from your backend based on the item ID
-const getItemData = (id: string) => {
-    return{
-  id : id,
-  title: "Vintage Watch",
-  description: "A beautiful vintage watch from the 1950s",
-  currentBid: 100,
-  endTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
-  imageUrl: "/placeholder.svg",
-    }
-}
+const getItemData = (id: string) => ({
+    id,
+    title: "Vintage Watch",
+    description: "A beautiful vintage watch from the 1950s",
+    currentBid: 100,
+    endTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+    imageUrl: "/placeholder.svg",
+  });
 
 export default function ItemPage(params : {id : string} ) {
   const [item, setItem] = useState(getItemData(params.id))
@@ -27,6 +25,12 @@ export default function ItemPage(params : {id : string} ) {
   }, [params.id])
 
   const handlePlaceBid = (amount: number) => {
+    //sign in prompt
+    //const username = ""; Replace with actual logic to get the username
+    // if (!username) {
+    //     alert("You must be signed in to place a bid.");
+    //     return;
+    //   }
     // Here you would typically send the bid to your backend
     console.log(`Placing bid of $${amount} on item ${params.id}`)
     setItem((prevItem) => ({ ...prevItem, currentBid: amount }))
@@ -34,7 +38,7 @@ export default function ItemPage(params : {id : string} ) {
 
   const handleAuctionEnd = () => {
     setAuctionEnded(true)
-    // Here you would typically notify the winner and update the item status in your backend
+    //update winner in backend
     console.log("Auction ended")
   }
 

@@ -29,6 +29,9 @@ export default function RootLayout({
               <Link href="/admin/submit-item" className="hover:text-gray-300">
                 List Item
               </Link>
+              <Link href="/sign-in" className="hover:text-gray-300">
+                Sign In
+              </Link>
             </div>
           </div>
         </nav>

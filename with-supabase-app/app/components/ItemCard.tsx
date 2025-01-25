@@ -1,4 +1,3 @@
-import type React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import CountdownTimer from "./CountdownTimer"
@@ -12,7 +11,7 @@ interface ItemCardProps {
   imageUrl: string
 }
 
-const ItemCard: React.FC<ItemCardProps> = ({ id, title, description, currentBid, endTime, imageUrl }) => {
+export default function ItemCard({ id, title, description, currentBid, endTime, imageUrl }: ItemCardProps) {
   return (
     <div className="border rounded-lg overflow-hidden shadow-lg">
       <Image
@@ -27,7 +26,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ id, title, description, currentBid,
         <p className="text-gray-600 mb-4">{description}</p>
         <div className="flex justify-between items-center">
           <span className="text-lg font-semibold">Current Bid: ${currentBid}</span>
-          {/* <CountdownTimer endTime={new Date(endTime)} onEnd={() => console.log("Auction ended")} /> */}
+          {/* <CountdownTimer endTime={endTime} onEnd={() => console.log("Auction ended")} /> */}
         </div>
         <Link
           href={`/item/${id}`}
@@ -39,6 +38,4 @@ const ItemCard: React.FC<ItemCardProps> = ({ id, title, description, currentBid,
     </div>
   )
 }
-
-export default ItemCard
 

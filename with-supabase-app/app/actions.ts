@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const signUpAction = async (formData: FormData) => {
+  const username = formData.get("username")?.toString();
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const supabase = await createClient();
@@ -40,6 +41,7 @@ export const signUpAction = async (formData: FormData) => {
 };
 
 export const signInAction = async (formData: FormData) => {
+  const username = formData.get("username") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const supabase = await createClient();
