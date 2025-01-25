@@ -55,7 +55,7 @@ export default function ItemPage(params : {id : string} ) {
           />
         </div>
         <div>
-          <h1 className="text-3xl font-bold mb-4">{item.title}</h1>
+          <h1 className="text-3xl mb-4">{item.title}</h1>
           <p className="text-gray-600 mb-4">{item.description}</p>
           <div className="text-xl font-semibold mb-4">Current Bid: ${item.currentBid}</div>
           {!auctionEnded ? (

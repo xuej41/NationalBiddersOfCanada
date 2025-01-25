@@ -23,10 +23,10 @@ export default function ItemCard({ id, title, description, currentBid, endTime, 
             className="w-full object-cover h-48"
         />
         <div className="p-4">
-            <h2 className="text-xl font-bold mb-2">{title}</h2>
+            <h2 className="text-2xl mb-2">{title}</h2>
             <p className="text-gray-600 mb-4">{description}</p>
             <div className="flex justify-between items-center">
-            <span className="text-lg font-semibold">Current Bid: ${currentBid}</span>
+            <span className="text-xl">Current Bid: ${currentBid}</span>
             {/* <CountdownTimer endTime={endTime} onEnd={() => console.log("Auction ended")} /> */}
             </div>
             <Link

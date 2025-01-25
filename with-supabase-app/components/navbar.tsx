@@ -16,32 +16,30 @@ export default function Navbar() {
   }, []);
 
     return (
-      <nav className={`top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-md py-6`}>
+      <nav className={`top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-md py-2 hover:py-4`}>
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="text-xl font-bold">
             <div className="flex items-center gap-2">
-              <Image src={logo} alt="NBC Logo" width={75} height={75} />
+              <Image src={logo} alt="NBC Logo" width={150} height={150} />
               <div className='flex flex-col'>
-                <span className="text-2xl font-semibold">National</span>
-                <span className="text-2xl font-semibold">Bidders</span>
               </div>
             </div>
           </Link>
           <div className="space-x-4">
-            <Link href="/items" className="hover:text-gray-300">
+            <Link href="/items" className="text-gray-500 hover:underline underline-offset-4">
               View Items
             </Link>
-            <Link href="/admin/submit-item" className="hover:text-gray-300">
+            <Link href="/admin/submit-item" className="text-gray-500 hover:underline underline-offset-4">
               List Item
             </Link>
-            <Link href="/sign-in" className="hover:text-gray-300">
+            <Link href="/sign-in" className="text-gray-500 hover:underline underline-offset-4">
               Sign In
             </Link>
             <div className="relative group inline-block">
-              <Link href="#" className="hover:text-gray-300">
+              <Link href="#" className="text-gray-500 hover:underline underline-offset-4">
                 Balance
               </Link>
-              <div className="absolute hidden group-hover:block bg-white text-black p-2 mt-1 rounded shadow-lg">
+              <div className="absolute hidden group-hover:block hover: bg-white text-gray-500 p-2 mt-1 rounded shadow-lg">
                 <p>Your balance: $1000</p> {/* Placeholder variable */}
                 <br /> {/*Line break */}
                 <p>Frozen funds: $1000</p> {/* Placeholder variable 2*/}
