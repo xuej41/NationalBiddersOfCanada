@@ -101,13 +101,13 @@ interface UpdateAuctionItem {
   export async function PATCH(req: NextRequest) {
     try {
       const supabase = await createClient()
-      const {data :user,error: userError} = await supabase.auth.getUser()
+    //   const {data :user,error: userError} = await supabase.auth.getUser()
   
       const id = req.nextUrl.searchParams.get('id')
   
-      if (!user || userError) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-      }
+    //   if (!user || userError) {
+    //     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    //   }
   
       // 2. Read the body
       const reqBody = (await req.json()) as UpdateAuctionItem
