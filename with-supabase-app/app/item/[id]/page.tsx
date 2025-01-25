@@ -12,7 +12,7 @@ const getItemData = (id: string) => ({
     description: "A beautiful vintage watch from the 1950s",
     currentBid: 100,
     endTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
-    imageUrl: "/placeholder.svg",
+    imageUrl: "/images/placeholder.jpg",
   });
 
 export default function ItemPage(params : {id : string} ) {
@@ -47,7 +47,7 @@ export default function ItemPage(params : {id : string} ) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <Image
-            src={item.imageUrl || "/placeholder.svg"}
+            src={item.imageUrl || "/images/placeholder.jpg"}
             alt={item.title}
             width={600}
             height={400}
