@@ -6,14 +6,48 @@ import { createClient } from '@/utils/supabase/server';
 interface createBid{
     auction_item_id: string,
     amount: number,
-    created_at: Date
+    created_at?: Date
+}
+
+async function isValid(data : any, user_id : string ,current_date : Date, amount :number): Promise<[boolean, any]> {
+
+    if (!data ){
+        return [false, NextResponse.json({ error: 'Auction item not found' }, { status: 404 })]
+    }
+
+    if (data.bidder_id === user_id){
+        return [false, NextResponse.json({ error: 'You are already the highest bidder!' }, { status: 400 })]
+    }
+
+    if (data.current_bid >= amount){ 
+        return [false, NextResponse.json({ error: 'Bid amount must be greater than current bid!' }, { status: 400 })]
+    }
+
+    if (data.current_bid + data.min_increase > amount){
+        return [false, NextResponse.json({ error: 'Minimum bid threshold not met!' }, { status: 400 }
+        )]
+    }
+
+    if (data.owner === user_id){
+        return [false, NextResponse.json({ error: 'You Cannot Bid on Your Own Item!' }, { status: 400 })]
+    }
+    // console.log(data.countdown, current_date)
+
+    if (new Date(data.countdown) < current_date){
+        return [false, NextResponse.json({ error: 'Auction has ended!' }, { status: 400 })]
+    }
+
+    // console.log('works')
+
+    return [true, null]
 }
 
 export async function POST(req: NextRequest){   
 
     const supabase = await createClient()
     const user = await supabase.auth.getUser()
-    console.log(user.data.user?.id)
+    // console.log(user.data.user?.id)
+    
 
     if (!user || !user.data.user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -27,9 +61,20 @@ export async function POST(req: NextRequest){
     if (!reqBody.amount){
         return NextResponse.json({ error: 'Amount is required' }, { status: 400 })
     }
-    if (!reqBody.created_at){
-        return NextResponse.json({ error: 'Created at is required' }, { status: 400 })
-    }
+
+    const currentDate = new Date();
+
+    const {data: data1, error: error1} = await supabase
+    .from('auction_items')
+    .select('*')
+    .eq('id', reqBody.auction_item_id)
+    .single()
+
+
+    const confirmValidity = await isValid(data1, user.data.user.id, currentDate, reqBody.amount)
+    if (!confirmValidity[0]){
+        return confirmValidity[1]
+    }   
 
     const { data, error } = await supabase
     .from('bids')
@@ -37,7 +82,7 @@ export async function POST(req: NextRequest){
       auction_item_id: reqBody.auction_item_id,
       bidder_id: user.data.user?.id,
       amount: reqBody.amount,
-      created_at: reqBody.created_at
+      created_at: currentDate
     })
     .select('*') // return the inserted rows
     .single()  
@@ -83,6 +128,6 @@ async function onBid(id : string, user_id : string){
       });
     
 
-    // console.log(data)
+    console.log(data)
     return data.bidder_id === user_id
 }

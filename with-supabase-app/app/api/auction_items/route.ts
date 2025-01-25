@@ -14,9 +14,9 @@ export async function GET(req: NextRequest){
 interface createAuctionItem {
     title: String
     description: String
-    starting_price: Number
+    starting_price: number
     end_time: Date
-    min_increase? : Number
+    min_increase? : number
 }
 
 export async function POST(req: NextRequest){
@@ -44,6 +44,18 @@ export async function POST(req: NextRequest){
     }
     if (!reqBody.end_time){
         return NextResponse.json({ error: 'End time is required' }, { status: 400 })
+    }
+
+    if (reqBody.starting_price < 0){
+        return NextResponse.json({ error: 'Starting price cannot be negative' }, { status: 400 })
+    }
+
+    if (reqBody.min_increase && reqBody.min_increase < 0){
+        return NextResponse.json({ error: 'Minimum increase cannot be negative' }, { status: 400 })
+    }
+
+    if (new Date(reqBody.end_time) < new Date()){
+        return NextResponse.json({ error: 'End time must be in the future' }, { status: 400 })
     }
 
 

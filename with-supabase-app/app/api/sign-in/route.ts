@@ -9,12 +9,6 @@ import { encodedRedirect } from "@/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-interface createAuctionItem {
-    title: String
-    description: String
-    starting_price: Number
-    end_time: Date
-}
 
 export async function POST(req: NextRequest){
     const formData = await req.formData()
