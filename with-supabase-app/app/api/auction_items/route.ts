@@ -36,7 +36,7 @@ export async function POST(req: NextRequest){
 
     const supabase = await createClient()
     const user = await supabase.auth.getUser()
-    if (!user) {
+    if (!user || !user.data.user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
@@ -75,7 +75,8 @@ export async function POST(req: NextRequest){
       description: reqBody.description,
       starting_bid: reqBody.starting_price,
       countdown: reqBody.end_time,
-      min_increase : reqBody.min_increase ? reqBody.min_increase : 5
+      min_increase : reqBody.min_increase ? reqBody.min_increase : 5,
+        owner: user.data.user?.id,
     })
     .select('*') 
 
