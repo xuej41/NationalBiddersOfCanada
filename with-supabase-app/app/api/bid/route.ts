@@ -6,14 +6,50 @@ import { createClient } from '@/utils/supabase/server';
 interface createBid{
     auction_item_id: string,
     amount: number,
-    created_at: Date
+    created_at?: Date
+}
+
+async function isValid(data : any, user_id : string ,current_date : Date, amount :number): Promise<[boolean, any]> {
+
+    if (!data ){
+        return [false, NextResponse.json({ error: 'Auction item not found' }, { status: 404 })]
+    }
+
+    console.log(data.bidder, user_id)
+
+    if (data.bidder === user_id){
+        return [false, NextResponse.json({ error: 'You are already the highest bidder!' }, { status: 400 })]
+    }
+
+    if (data.current_bid >= amount){ 
+        return [false, NextResponse.json({ error: 'Bid amount must be greater than current bid!' }, { status: 400 })]
+    }
+
+    if (data.current_bid + data.min_increase > amount){
+        return [false, NextResponse.json({ error: 'Minimum bid threshold not met!' }, { status: 400 }
+        )]
+    }
+
+    if (data.owner === user_id){
+        return [false, NextResponse.json({ error: 'You Cannot Bid on Your Own Item!' }, { status: 400 })]
+    }
+    // console.log(data.countdown, current_date)
+
+    if (new Date(data.countdown) < current_date){
+        return [false, NextResponse.json({ error: 'Auction has ended!' }, { status: 400 })]
+    }
+
+    // console.log('works')
+
+    return [true, null]
 }
 
 export async function POST(req: NextRequest){   
 
     const supabase = await createClient()
     const user = await supabase.auth.getUser()
-    console.log(user.data.user?.id)
+    // console.log(user.data.user?.id)
+    
 
     if (!user || !user.data.user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -27,9 +63,20 @@ export async function POST(req: NextRequest){
     if (!reqBody.amount){
         return NextResponse.json({ error: 'Amount is required' }, { status: 400 })
     }
-    if (!reqBody.created_at){
-        return NextResponse.json({ error: 'Created at is required' }, { status: 400 })
-    }
+
+    const currentDate = new Date();
+
+    const {data: data1, error: error1} = await supabase
+    .from('auction_items')
+    .select('*')
+    .eq('id', reqBody.auction_item_id)
+    .single()
+
+
+    const confirmValidity = await isValid(data1, user.data.user.id, currentDate, reqBody.amount)
+    if (!confirmValidity[0]){
+        return confirmValidity[1]
+    }   
 
     const { data, error } = await supabase
     .from('bids')
@@ -37,7 +84,7 @@ export async function POST(req: NextRequest){
       auction_item_id: reqBody.auction_item_id,
       bidder_id: user.data.user?.id,
       amount: reqBody.amount,
-      created_at: reqBody.created_at
+      created_at: currentDate
     })
     .select('*') // return the inserted rows
     .single()  
@@ -71,18 +118,97 @@ async function onBid(id : string, user_id : string){
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    const res = await fetch(`http://localhost:3000/api/auction_items/?id=${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            bidder_id : data.bidder_id,
-            current_bid : data.amount,
-        }),
-      });
+    const res = await update({bidder_id: user_id, current_bid: data.amount}, id)
     
 
-    // console.log(data)
+    console.log(data)
     return data.bidder_id === user_id
 }
+
+interface UpdateAuctionItem {
+    title?: string
+    description?: string
+    starting_price?: number
+    end_time?: string | Date
+    min_increase?: number
+    bidder_id?: string
+    current_bid?: number
+  }
+  
+
+function buildUpdateObject(body: UpdateAuctionItem): Record<string, unknown> {
+    const updateFields: Record<string, unknown> = {}
+  
+    if (body.title !== undefined) updateFields.title = body.title
+    if (body.description !== undefined) updateFields.description = body.description
+    if (body.starting_price !== undefined) updateFields.starting_bid = body.starting_price
+    if (body.end_time !== undefined) {
+      updateFields.countdown =
+        typeof body.end_time === 'string'
+          ? new Date(body.end_time).toISOString()
+          : body.end_time.toISOString()
+    }
+    if (body.min_increase !== undefined) updateFields.min_increase = body.min_increase
+    if (body.bidder_id !== undefined) updateFields.bidder = body.bidder_id
+    if (body.current_bid !== undefined) updateFields.current_bid = body.current_bid
+  
+    return updateFields
+  }
+  
+  
+async function update(params : UpdateAuctionItem, id: string) {
+    try {
+      const supabase = await createClient()
+
+
+      const { data: auctionItem, error: auctionItemError } = await supabase
+      .from('auction_items')
+      .select('*')
+        .eq('id', id)
+        .single()
+
+        if (auctionItemError) {
+            return NextResponse.json({ error: auctionItemError }, { status: 500 })
+        }
+
+
+  
+      // 3. Build the fields to update
+      const updateData = buildUpdateObject(params)
+  
+      // Edge case: if no fields are provided, no need to update
+      if (Object.keys(updateData).length === 0) {
+        return NextResponse.json(
+          { error: 'No valid fields provided for update' },
+          { status: 400 }
+        )
+      }
+  
+      // 4. Perform the update
+      //    In a typical REST approach, the `[id]` param is the auction item ID you want to update
+      const { data, error } = await supabase
+        .from('auction_items')
+        .update(updateData)
+        .eq('id', id)
+        .select('*')
+        .single()
+  
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 })
+      }
+      if (!data) {
+        return NextResponse.json(
+          { error: 'Auction item not found or no update performed' },
+          { status: 404 }
+        )
+      }
+  
+      return NextResponse.json(
+        { message: 'Auction item updated successfully', data },
+        { status: 200 }
+      )
+    } catch (err) {
+      console.error(err)
+      return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    }
+  }
