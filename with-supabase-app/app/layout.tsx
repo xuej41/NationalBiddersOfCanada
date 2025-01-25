@@ -32,8 +32,18 @@ export default function RootLayout({
               <Link href="/sign-in" className="hover:text-gray-300">
                 Sign In
               </Link>
+                <div className="relative group inline-block">
+                <Link href="#" className="hover:text-gray-300">
+                  Balance
+                </Link>
+                <div className="absolute hidden group-hover:block bg-white text-black p-2 mt-1 rounded shadow-lg">
+                  <p>Your balance: $1000</p> {/* Placeholder variable */}
+                  <br /> {/*Line break */}
+                  <p>Frozen funds: $1000</p> {/* Placeholder variable 2*/}
+                </div>
+                </div>
+              </div>
             </div>
-          </div>
         </nav>
         {children}
       </body>
