@@ -4,7 +4,6 @@ import Navbar from "../components/navbar"
 export default function Home() {
   return (
     <div>
-      <Navbar />
       <main className="container mx-auto py-8">
         <h1 className="text-3xl font-bold mb-8">Welcome to Our Bidding Platform</h1>
         <p className="mb-4">Explore our current auctions or list a new item.</p>
