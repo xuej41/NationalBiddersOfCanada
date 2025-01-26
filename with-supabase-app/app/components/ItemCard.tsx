@@ -8,10 +8,15 @@ interface ItemCardProps {
   description: string
   currentBid: number
   endTime: Date
-  imageUrl: string
+  imageUrl?: string
 }
 
+
+
+
 export default function ItemCard({ id, title, description, currentBid, endTime, imageUrl }: ItemCardProps) {
+  console.log("ItemCard", id, title, description, currentBid, endTime, imageUrl)
+
   return (
     <Link href={`/item/${id}`}>
         <div className="border rounded-lg overflow-hidden shadow-lg hover:bg-gray-100 transition-colors duration-300 hover:border-gray-700">
@@ -27,7 +32,7 @@ export default function ItemCard({ id, title, description, currentBid, endTime, 
             <p className="text-gray-600 mb-4">{description}</p>
             <div className="flex justify-between items-center">
             <span className="text-xl">Current Bid: ${currentBid}</span>
-            {/* <CountdownTimer endTime={endTime} onEnd={() => console.log("Auction ended")} /> */}
+            <CountdownTimer targetDate={new Date(endTime)} />
             </div>
             <Link
             href={`/item/${id}`}
