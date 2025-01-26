@@ -93,7 +93,7 @@ export default function Navbar() {
     return (
       <nav className={`top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-md py-2 hover:py-4`}>
         <div className="container mx-auto flex justify-between items-center">
-          <Link href="/items" className="text-xl font-bold">
+          <Link href="/protected" className="text-xl font-bold">
             <div className="flex items-center gap-2">
               <Image src={logo} alt="NBC Logo" width={150} height={150} />
               <div className='flex flex-col'>
