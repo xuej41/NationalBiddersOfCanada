@@ -5,6 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+
+const convertImageToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    // When the file is successfully read
+    reader.onload = () => {
+      const base64String = reader.result as string; // `reader.result` is a Base64 string
+      resolve(base64String);
+    };
+    
+    // If there's an error
+    reader.onerror = (error) => {
+      reject(error);
+    };
+
+    // Read the file as a Data URL (Base64 string)
+    reader.readAsDataURL(file);
+  });
+};
+
+
 export default function ItemSubmissionForm() {
   const [formData, setFormData] = useState({
     title: "",
@@ -44,8 +66,9 @@ export default function ItemSubmissionForm() {
         starting_price: formData.starting_price,
         end_time: formData.end_time,
         min_increase: formData.min_increase,
-        images: formData.images,
+        image: await convertImageToBase64(formData.images[0]),
       };
+      console.log("Submitting item:", backendData);
   
       const response = await fetch("http://localhost:3000/api/auction_items", {
         method: "POST",
@@ -56,6 +79,7 @@ export default function ItemSubmissionForm() {
       });
   
       if (!response.ok) {
+        console.log("Error submitting item:", response);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
   

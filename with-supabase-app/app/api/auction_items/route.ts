@@ -26,6 +26,7 @@ interface createAuctionItem {
     starting_price: number
     end_time: Date
     min_increase? : number
+    image: string,
 }
 
 export async function POST(req: NextRequest){
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest){
       countdown: reqBody.end_time,
       min_increase : reqBody.min_increase ? reqBody.min_increase : 5,
         owner: user.data.user?.id,
+        image : reqBody.image
     })
     .select('*') 
 

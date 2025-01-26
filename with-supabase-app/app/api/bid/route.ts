@@ -21,6 +21,10 @@ async function isValid(data : any, user_id : string ,current_date : Date, amount
         return [false, NextResponse.json({ error: 'You are already the highest bidder!' }, { status: 400 })]
     }
 
+    if (data.starting_bid > amount){
+        return [false, NextResponse.json({ error: 'Bid amount must be greater or equal to the starting bid!' }, { status: 400 })]
+    }
+
     if (data.current_bid >= amount){ 
         return [false, NextResponse.json({ error: 'Bid amount must be greater than current bid!' }, { status: 400 })]
     }
