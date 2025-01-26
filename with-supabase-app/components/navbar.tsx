@@ -101,17 +101,17 @@ export default function Navbar() {
             </div>
           </Link>
           <div className="space-x-6">
-            <Link href="/items" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
+            <Link href="/items" className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300">
               View Items
             </Link>
-            <Link href="/admin/submit-item" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
+            <Link href="/admin/submit-item" className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300">
               List Item
             </Link>
-            {!user ?<Link href="/sign-in" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
+            {!user ?<Link href="/sign-in" className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300">
               Sign In
-            </Link> : <Link href="/" onClick={  () => signOut()} className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4"> Sign Out</Link>}
+            </Link> : <Link href="/" onClick={  () => signOut()} className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300"> Sign Out</Link>}
             <div className="relative group inline-block">
-              <Link href="#" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
+              <Link href="#" className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300">
                 Balance
               </Link>
               <div className="absolute hidden group-hover:block hover: bg-white text-gray-500 p-2 mt-1 rounded shadow-lg">

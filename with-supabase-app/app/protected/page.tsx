@@ -1,7 +1,7 @@
-import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
 import { createClient } from "@/utils/supabase/server";
-import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
+import Image from "next/image";
+import "./page.css";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
@@ -15,23 +15,20 @@ export default async function ProtectedPage() {
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-      <div className="w-full">
-        <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
-          <InfoIcon size="16" strokeWidth={2} />
-          This is a protected page that you can only see as an authenticated
-          user
+    <div className="ProtectedPage">
+      <div className="flex flex-1 w-full h-full items-center justify-center">
+        <div className="flex flex-col items-center justify-center w-2/3 p-8">
+          <div className="flex items-center mb-5">
+            <Image src="/nbclogonotext.png" alt="Logo" width={150} height={150} />
+            <h1 className="text-8xl">‎ |</h1><h1 className="text-4xl ml-5">A Smarter Way to Bid.</h1>
+          </div>
+          <p className="text-lg text-gray-700 mb-5">
+          Connect with millions globally on Queen's leading live auction site. 
+          </p>
         </div>
-      </div>
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
-        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          {JSON.stringify(user, null, 2)}
-        </pre>
-      </div>
-      <div>
-        <h2 className="font-bold text-2xl mb-4">Next steps</h2>
-        <FetchDataSteps />
+        <div className="w-1/2 p-8">
+          <Image src="/bg.gif" alt="Sample Image" width={500} height={500} className="rounded-lg shadow-lg" />
+        </div>
       </div>
     </div>
   );
