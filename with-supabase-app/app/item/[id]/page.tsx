@@ -92,7 +92,7 @@ export default function ItemPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [item, user]);
+  }, [item]);
 
   const onPlaceBid = async (newBid: number) => {
     if (!id || !item) return ;
@@ -139,6 +139,7 @@ export default function ItemPage() {
           /> */}
         </div>
         <div>
+          {item.owner == user ? <h1 className="text-3xl mb-4">This is YOUR Auction!</h1> : ""}
           <h1 className="text-3xl mb-4">{item.title}</h1>
           <p className="text-gray-600 mb-4">{item.description}</p>
           <div className="text-xl font-semibold mb-4">Current Bid: ${item.current_bid} </div>
