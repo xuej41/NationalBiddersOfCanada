@@ -8,6 +8,7 @@ export default function ChatWindow() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [items, setItems] = useState([]);
+  const [chatHistory, setChatHistory] = useState<{ sender: string; text: string }[]>([]); // State to store chat history
   const [openAIResponse, setOpenAIResponse] = useState<string | null>(null);
   const openai = new OpenAI({
     apiKey: process.env.NEXT_PUBLIC_OPEN_AI_KEY,
@@ -18,8 +19,23 @@ export default function ChatWindow() {
     setIsOpen(!isOpen);
   };
 
+  const handleSend = async () => {
+    if (message.trim() !== "") {
+      // Add the user's message to the chat history
+      setChatHistory((prevHistory) => [...prevHistory, { sender: "user", text: message }]);
+
+      // Call OpenAI API to get the response
+      const response = JSON.stringify({openAIResponse});
+
+      setChatHistory((prevHistory) => [...prevHistory, { sender: "bot", text: response }]);
+
+      setMessage(""); // Clear the input box after sending
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+      handleSend();
       handleSubmit();
     }
   };
@@ -42,19 +58,20 @@ export default function ChatWindow() {
   const handleSubmit = async () => {
     try {
       console.log(message);
-      const openAIResponse = await openai.chat.completions.create({
+      const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
           { role: "system", content: "You are a helpful assistant for recommending the best auction item to the user based on a list of auctioned items and the requirements they asked for." },
           {
             role: "user",
-            content: `Recommend the best auction item for me. I want something that is ${message}. These are the items for auction: ${JSON.stringify(items)}, return the best item for me and its id.`,
+            content: `Recommend the best auction item for me. I want something that is ${message}. These are the items for auction: ${JSON.stringify(items)}, return the best item for me and its id. Do not have any newlines or bold characters in your response.`,
           },
         ],
       });
-      const openAIData = openAIResponse.choices[0].message.content;
+      const openAIData = response.choices[0].message.content;
       setOpenAIResponse(openAIData);
       console.log("OpenAI Response: ", openAIData);
+      console.log("OpenAI Response2: ", openAIResponse);
     } catch (error) {
       console.error("Error calling OpenAI: ", error);
     }
@@ -75,6 +92,16 @@ export default function ChatWindow() {
       <div className={`chat-window ${isOpen ? "open" : "closed"}`}>
         <div className="font-bold text-lg mb-2">Virtual Assistant</div>
         <div className="text-gray-700 mb-4">Hello, how can I help you today?</div>
+        <div className="chat-history">
+          {chatHistory.map((msg, index) => (
+            <div
+              key={index}
+              className={`chat-message ${msg.sender === "user" ? "user-message" : "bot-message"}`}
+            >
+              {msg.text}
+            </div>
+          ))}
+        </div>
         <div className="chatbox-container">
           <input
             type="text"
@@ -84,7 +111,7 @@ export default function ChatWindow() {
             onKeyDown={handleKeyDown}
             placeholder="Type your message..."
           />
-          <button onClick={handleSubmit} className="chatbox-send-button">
+          <button onClick={() => { handleSend(); handleSubmit(); }} className="chatbox-send-button">
             Send
           </button>
         </div>

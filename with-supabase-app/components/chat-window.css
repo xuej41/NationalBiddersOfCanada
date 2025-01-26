@@ -12,6 +12,10 @@
     transform: translateX(100%);
     opacity: 0;
     transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-size: 0.85rem;
   }
 
   .chat-window.open {
@@ -22,6 +26,33 @@
   .chat-window.closed {
     transform: translateX(100%);
     opacity: 0;
+  }
+
+  .chat-history {
+    flex: 1;
+    overflow-y: scroll;
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chat-message {
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+    max-width: 80%;
+  }
+  
+  .user-message {
+    background-color: #3b82f6;
+    color: white;
+    align-self: flex-end;
+  }
+  
+  .bot-message {
+    background-color: #e5e7eb;
+    color: black;
+    align-self: flex-start;
   }
 
   .chatbox-container {
