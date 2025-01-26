@@ -60,7 +60,7 @@ export async function POST(req: NextRequest){
     }
 
     const reqBody = (await req.json()) as createBid
-    console.log(reqBody)
+    // console.log(reqBody)
     if (!reqBody.auction_item_id){
         return NextResponse.json({ error: 'Auction item id is required' }, { status: 400 })
     }   
@@ -139,7 +139,7 @@ async function onBid(id : string, user_id : string){
     const res = await update({bidder_id: user_id, current_bid: data.amount}, id)
     
 
-    console.log(data)
+    // console.log(data)
     return data.bidder_id === user_id
 }
 
@@ -205,7 +205,7 @@ async function update(params : UpdateAuctionItem, id: string) {
       const bidder = auctionItem.bidder
       const current_bid = auctionItem.current_bid
       
-    console.log( "bid, bidder",current_bid, bidder)
+    // console.log( "bid, bidder",current_bid, bidder)
     let profile = {balance: 0, locked_bal: 0}
 
 
@@ -225,13 +225,13 @@ async function update(params : UpdateAuctionItem, id: string) {
         return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
       }
       
-      console.log("profile",profile)
-      console.log(current_bid)
+      // console.log("profile",profile)
+      // console.log(current_bid)
     
       // 2. Calculate the new values
       const newLocked = profile.locked_bal - current_bid
       const newBalance = profile.balance + current_bid
-      console.log("locked and new balance for the new profile",newLocked, newBalance)
+      // console.log("locked and new balance for the new profile",newLocked, newBalance)
       
       // 3. Update the profile
       let { data: updated, error: updateError } = await supabase
@@ -273,7 +273,7 @@ async function update(params : UpdateAuctionItem, id: string) {
         // 2. Calculate the new values
         const newBalance2 = profile2.balance - params.current_bid;
         const newLocked2 = profile2.locked_bal + params.current_bid;
-        console.log("locked and new balance 2 for the old profile",newLocked2, newBalance2)
+        // console.log("locked and new balance 2 for the old profile",newLocked2, newBalance2)
 
         // 3. Update the profile
         let { data: updated2, error: updateError2 } = await supabase

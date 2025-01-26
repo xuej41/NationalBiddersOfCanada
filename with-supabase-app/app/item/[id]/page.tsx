@@ -22,11 +22,30 @@ export default function ItemPage() {
   const [auctionEnded, setAuctionEnded] = useState(false);
   const id = useParams().id;
   const supabase = createClient();
-
+  const [user, setUser] = useState<any>(null);
 
 
 
   useEffect(() => {
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (data && data.user) {
+        setUser(data.user.id);
+      }
+      else{
+        console.error("Error fetching user:", error);
+      }
+    }
+    fetchUser();
+    console.log(user);
+  }
+  ,[user]);
+
+
+
+  useEffect(() => {
+
+
     // Fetch the specific item
     const fetchItem = async () => {
       const { data, error } = await supabase
@@ -43,6 +62,7 @@ export default function ItemPage() {
     };
 
     fetchItem();
+
 
     // Subscribe to real-time changes for the specific item
     const channel = supabase
@@ -72,10 +92,10 @@ export default function ItemPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [item]);
+  }, [item, user]);
 
   const onPlaceBid = async (newBid: number) => {
-    if (!id || !item) return false;
+    if (!id || !item) return ;
 
     try {
       const response = await fetch("http://localhost:3000/api/bid", {
@@ -93,7 +113,6 @@ export default function ItemPage() {
         const updatedItem = await response.json();
         setItem(updatedItem); // Update the item with the latest data
         console.log("Bid placed successfully:", updatedItem);
-        return true
       } else {
         console.error("Failed to place bid:", response.statusText, await response.json());
       }
@@ -122,7 +141,8 @@ export default function ItemPage() {
         <div>
           <h1 className="text-3xl mb-4">{item.title}</h1>
           <p className="text-gray-600 mb-4">{item.description}</p>
-          <div className="text-xl font-semibold mb-4">Current Bid: ${item.current_bid}</div>
+          <div className="text-xl font-semibold mb-4">Current Bid: ${item.current_bid} </div>
+          <div className="text-xl font-semibold mb-4" >{item.bidder == user ? " You are leading!" : ""}</div>
           {!auctionEnded ? (
             <>
               <div className="mb-4">

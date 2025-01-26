@@ -1,23 +1,25 @@
 "use client"
 
-import { useState } from "react"
+import { use, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
 interface BiddingFormProps {
   currentBid: number
   minIncrement: number
-  onPlaceBid: (amount: number) => boolean
+  onPlaceBid: (amount: number) => void
 }
 
 export default function BiddingForm({ currentBid, minIncrement, onPlaceBid }: BiddingFormProps) {
   const [bidAmount, setBidAmount] = useState(currentBid + minIncrement)
 
+  useEffect(() => {
+    setBidAmount(currentBid + minIncrement)
+  }, [currentBid, minIncrement])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (onPlaceBid(bidAmount)){
-      setBidAmount(currentBid + minIncrement)
-    }
+    onPlaceBid(bidAmount)
     
   }
 
