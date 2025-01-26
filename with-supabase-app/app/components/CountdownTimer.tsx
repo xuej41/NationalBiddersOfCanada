@@ -1,55 +1,57 @@
-"use client"
-
-import { useState, useEffect } from "react"
+import React, { useEffect, useState } from 'react';
 
 interface CountdownTimerProps {
-  endTime: Date
-  onEnd: () => void
+  targetDate: Date;
 }
+const max = (a: number, b: number) => {
+  return a > b ? a : b;
+};
 
-export default function CountdownTimer({ endTime, onEnd }: CountdownTimerProps) {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
 
-  function calculateTimeLeft() {
-    const difference = +new Date(endTime) - +new Date()
-
-    if (difference > 0) {
-      return {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60),
-      }
-    }
-
-    return null
-  }
+const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
+  // State to hold the formatted time left (HH:MM:SS)
+  const [timeLeft, setTimeLeft] = useState("00:00:00");
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      const newTimeLeft = calculateTimeLeft()
-      setTimeLeft(newTimeLeft)
+    if (!targetDate) {
+      return;
+    }
+    // A function that calculates the difference and formats it
+    const updateTimer = () => {
+      const now = new Date();
 
-      if (!newTimeLeft) {
-        clearInterval(timer)
-        onEnd()
+      let diff = max(targetDate.getTime() - now.getTime(), 0);
+
+      // If the target date is in the past, show 00:00:00
+      if (diff < 0) {
+        diff = 0;
       }
-    }, 1000)
 
-    return () => clearInterval(timer)
-  }, [endTime, onEnd])
+      // Convert the difference from ms to total seconds
+      const totalSeconds = Math.floor(diff / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
 
-  if (!timeLeft) {
-    return <div className="text-2xl font-bold text-red-600">Auction Ended</div>
-  }
+      // Format each unit to be at least two digits, e.g. 00:07:09
+      const hh = String(hours).padStart(2, '0');
+      const mm = String(minutes).padStart(2, '0');
+      const ss = String(seconds).padStart(2, '0');
 
-  return (
-    <div className="text-2xl font-bold">
-      {timeLeft.days > 0 && `${timeLeft.days}d `}
-      {timeLeft.hours > 0 && `${timeLeft.hours}h `}
-      {timeLeft.minutes > 0 && `${timeLeft.minutes}m `}
-      {timeLeft.seconds}s
-    </div>
-  )
-}
+      setTimeLeft(`${hh}:${mm}:${ss}`);
+    };
 
+    // Run once immediately so it shows the correct time on mount
+    updateTimer();
+
+    // Update every second
+    const intervalId = setInterval(updateTimer, 1000);
+
+    // Cleanup on unmount
+    return () => clearInterval(intervalId);
+  }, [targetDate]);
+
+  return <div>{timeLeft}</div>;
+};
+
+export default CountdownTimer;

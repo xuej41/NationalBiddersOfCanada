@@ -8,13 +8,18 @@ interface ItemCardProps {
   description: string
   currentBid: number
   endTime: Date
-  imageUrl: string
+  imageUrl?: string
 }
 
+
+
+
 export default function ItemCard({ id, title, description, currentBid, endTime, imageUrl }: ItemCardProps) {
+  console.log("ItemCard", id, title, description, currentBid, endTime, imageUrl)
+
   return (
     <Link href={`/item/${id}`}>
-        <div className="border rounded-lg overflow-hidden shadow-lg hover:bg-gray-100 transition-colors duration-300 hover:border-gray-700">
+        <div className="border-2 rounded-lg overflow-hidden shadow-lg hover:border-2 hover:border-gray-400 hover:bg-gray-100 transition-colors duration-300">
         <Image
             src={imageUrl || "/placeholder.jpg"}
             alt={title}
@@ -27,12 +32,11 @@ export default function ItemCard({ id, title, description, currentBid, endTime, 
             <p className="text-gray-600 mb-4">{description}</p>
             <div className="flex justify-between items-center">
             <span className="text-xl">Current Bid: ${currentBid}</span>
-            {/* <CountdownTimer endTime={endTime} onEnd={() => console.log("Auction ended")} /> */}
+            <CountdownTimer targetDate={new Date(endTime)} />
             </div>
             <Link
             href={`/item/${id}`}
-            className="mt-4 block text-center bg-red-500 text-white py-2 rounded-full transition-colors duration-300 hover:bg-red-700"
-            >
+            className="focus:ring-2 focus:ring-red-500 focus:ring-offset-1 mt-4 block text-center bg-red-500 text-white py-2 rounded-full transition-colors duration-300 hover:bg-red-700">
             View Details
             </Link>
         </div>
