@@ -106,7 +106,14 @@ export default function AuctionItems() {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {items ? items.map((item) => (
-                <ItemCard key={item.id} id={item.id} title={item.title} description={item.description} currentBid={item.current_bid} endTime={item.countdown} /> // key, id, title, description, currentBid, endTime, imageUrl
+                <ItemCard 
+                  key={item.id} 
+                  id={item.id} 
+                  title={item.title} 
+                  description={item.description} 
+                  currentBid={item.current_bid} 
+                  endTime={new Date(item.countdown)} 
+                /> // key, id, title, description, currentBid, endTime, imageUrl
             )) : ""}
         </div>
     );
