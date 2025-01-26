@@ -10,6 +10,9 @@ export default function ChatWindow() {
   const [items, setItems] = useState([]);
   const [chatHistory, setChatHistory] = useState<{ sender: string; text: string }[]>([]); // State to store chat history
   const [openAIResponse, setOpenAIResponse] = useState<string | null>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const openai = new OpenAI({
     apiKey: process.env.NEXT_PUBLIC_OPEN_AI_KEY,
     dangerouslyAllowBrowser: true
@@ -22,10 +25,11 @@ export default function ChatWindow() {
   const handleSend = async () => {
     if (message.trim() !== "") {
       // Add the user's message to the chat history
-      setChatHistory((prevHistory) => [...prevHistory, { sender: "user", text: message }]);
 
       // Call OpenAI API to get the response
-      const response = JSON.stringify({openAIResponse});
+      const response =  JSON.stringify(openAIResponse);
+      console.log("True response", response)
+      setChatHistory((prevHistory) => [...prevHistory, { sender: "user", text: message }]);
 
       setChatHistory((prevHistory) => [...prevHistory, { sender: "bot", text: response }]);
 
@@ -41,22 +45,33 @@ export default function ChatWindow() {
   };
 
   const getItems = async () => {
-        try {
-          const response = await fetch("http://localhost:3000/api/auction_items", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          const data = await response.json();
-          setItems(data);
-        } catch (error) {
-          console.error("Error initiating call: ", error);
-        }
+    try {
+      const response = await fetch("http://localhost:3000/api/auction_items", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const data = await response.json();
+  
+      // Remove the `image` field from each object
+      const updatedData = data.map((item : any) => {
+        const { image, ...rest } = item; // Destructure to remove `image`
+        return rest; // Return the object without `image`
+      });
+      
+      console.log(updatedData);
+      setItems(updatedData); // Set the modified data
+    } catch (error) {
+      console.error("Error initiating call: ", error);
+    }
   };
+  
 
   const handleSubmit = async () => {
     try {
+      setIsLoading(true);
       console.log(message);
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
@@ -64,16 +79,19 @@ export default function ChatWindow() {
           { role: "system", content: "You are a helpful assistant for recommending the best auction item to the user based on a list of auctioned items and the requirements they asked for." },
           {
             role: "user",
-            content: `Recommend the best auction item for me. I want something that is ${message}. These are the items for auction: ${JSON.stringify(items)}, return the best item for me and its id. Do not have any newlines or bold characters in your response.`,
+            content: `Recommend the best auction item for me. I want something that is ${message}. These are the items for auction: ${JSON.stringify(items)}, return the best item for me and its id. Do not have any newlines or bold characters in your response, make sure that it is in text message form, not json.`,
           },
         ],
       });
-      const openAIData = response.choices[0].message.content;
+      const openAIData =  response.choices[0].message.content;
       setOpenAIResponse(openAIData);
       console.log("OpenAI Response: ", openAIData);
       console.log("OpenAI Response2: ", openAIResponse);
     } catch (error) {
       console.error("Error calling OpenAI: ", error);
+    }
+    finally{
+      setIsLoading(false);
     }
   };
 
@@ -111,7 +129,7 @@ export default function ChatWindow() {
             onKeyDown={handleKeyDown}
             placeholder="Type your message..."
           />
-          <button onClick={() => { handleSend(); handleSubmit(); }} className="chatbox-send-button">
+          <button onClick={() => { handleSend(); handleSubmit();  }} className="chatbox-send-button">
             Send
           </button>
         </div>

@@ -109,7 +109,7 @@ export default function Navbar() {
             </Link>
             {!user ?<Link href="/sign-in" className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300">
               Sign In
-            </Link> : <Link href="/" onClick={  () => signOut()} className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300"> Sign Out</Link>}
+            </Link> : <Link href="/" onClick={  () => {setUser(null); signOut()}} className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300"> Sign Out</Link>}
             <div className="relative group inline-block">
               <Link href="#" className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300">
                 Balance
