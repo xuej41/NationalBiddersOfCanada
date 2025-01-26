@@ -62,7 +62,7 @@ export default function ItemSubmissionForm() {
       />
       <Input type="datetime-local" name="endTime" value={formData.endTime} onChange={handleChange} required />
       <Input type="file" onChange={handleImageChange} accept="image/*" multiple required />
-      <Button type="submit">Submit Item</Button>
+      <Button type="submit" className="rounded-full bg-gray-100">Submit Item</Button>
     </form>
   )
 }

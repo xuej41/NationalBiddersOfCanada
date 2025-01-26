@@ -26,17 +26,17 @@ export default function Navbar() {
             </div>
           </Link>
           <div className="space-x-4">
-            <Link href="/items" className="text-gray-500 hover:underline underline-offset-4">
+            <Link href="/items" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
               View Items
             </Link>
-            <Link href="/admin/submit-item" className="text-gray-500 hover:underline underline-offset-4">
+            <Link href="/admin/submit-item" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
               List Item
             </Link>
-            <Link href="/sign-in" className="text-gray-500 hover:underline underline-offset-4">
+            <Link href="/sign-in" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
               Sign In
             </Link>
             <div className="relative group inline-block">
-              <Link href="#" className="text-gray-500 hover:underline underline-offset-4">
+              <Link href="#" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
                 Balance
               </Link>
               <div className="absolute hidden group-hover:block hover: bg-white text-gray-500 p-2 mt-1 rounded shadow-lg">
