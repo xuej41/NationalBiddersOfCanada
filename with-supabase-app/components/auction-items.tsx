@@ -30,7 +30,7 @@ export default function AuctionItems() {
             table: 'auction_items',
           },
           (payload) => {
-            // console.log('Change received!', payload);
+            console.log('Change received!', payload);
   
             // Decide how to update your local state:
             if (payload.eventType === 'INSERT') {
@@ -54,55 +54,8 @@ export default function AuctionItems() {
       return () => {
         supabase.removeChannel(channel);
       };
-    }, []);
-    // console.log(items);
+    }, [items]);
   
-    // setItems([
-    //     {
-    //     id: "1",
-    //     title: "Vintage Watch",
-    //     description: "A beautiful vintage watch from the 1950s",
-    //     currentBid: 100,
-    //     endTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
-    //     imageUrl: "/images/watch.jpg",
-    //     },
-    //     {
-    //     id: "2",
-    //     title: "Antique Vase",
-    //     description: "An exquisite antique vase from the Ming Dynasty",
-    //     currentBid: 500,
-    //     endTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
-    //     imageUrl: "/images/vase.jpg",
-    //     },
-    //     {
-    //     id: "3",
-    //     title: "Rare Coin Collection",
-    //     description: "A set of rare coins from various historical periods",
-    //     currentBid: 250,
-    //     endTime: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // 4 days from now
-    //     imageUrl: "/images/coins.jpg",
-    //     },
-    // ]);
-
-    // const getItems = async () => {
-    //     try {
-    //       const response = await fetch("http://localhost:3000/api/auction_items", {
-    //         method: "GET",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //       });
-    //       const data = await response.json();
-    //       setItems(data);
-    //     } catch (error) {
-    //       console.error("Error initiating call: ", error);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     getItems();
-    // }, []);
-
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {items ? items.map((item) => (

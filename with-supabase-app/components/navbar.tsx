@@ -93,7 +93,7 @@ export default function Navbar() {
     return (
       <nav className={`top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-md py-2 hover:py-4`}>
         <div className="container mx-auto flex justify-between items-center">
-          <Link href="/items" className="text-xl font-bold">
+          <Link href="/protected" className="text-xl font-bold">
             <div className="flex items-center gap-2">
               <Image src={logo} alt="NBC Logo" width={150} height={150} />
               <div className='flex flex-col'>
@@ -109,7 +109,7 @@ export default function Navbar() {
             </Link>
             {!user ?<Link href="/sign-in" className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300">
               Sign In
-            </Link> : <Link href="/" onClick={  () => signOut()} className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300"> Sign Out</Link>}
+            </Link> : <Link href="/" onClick={  () => {setUser(null); signOut()}} className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300"> Sign Out</Link>}
             <div className="relative group inline-block">
               <Link href="#" className="text-gray-500 hover:underline hover:text-gray-300 underline-offset-4 transition duration-300">
                 Balance
