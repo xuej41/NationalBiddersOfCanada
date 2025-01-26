@@ -13,7 +13,7 @@ interface ItemCardProps {
 
 export default function ItemCard({ id, title, description, currentBid, endTime, imageUrl }: ItemCardProps) {
   const isExpired = new Date() > endTime;
-  console.log("ItemCard", id, title, description, currentBid, endTime, imageUrl)
+  // console.log("ItemCard", id, title, description, currentBid, endTime, imageUrl)
 
   return (
     <Link href={`/item/${id}`}>

@@ -9,7 +9,7 @@ export default function ChatWindow() {
   const [message, setMessage] = useState("");
   const [items, setItems] = useState([]);
   const [chatHistory, setChatHistory] = useState<{ sender: string; text: string }[]>([]); // State to store chat history
-  const [openAIResponse, setOpenAIResponse] = useState<string | null>(null);
+  const [openAIResponse, setOpenAIResponse] = useState<string | null>("Hi how can I help you today?");
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,6 +32,7 @@ export default function ChatWindow() {
       setChatHistory((prevHistory) => [...prevHistory, { sender: "user", text: message }]);
 
       setChatHistory((prevHistory) => [...prevHistory, { sender: "bot", text: response }]);
+      console.log(chatHistory)
 
       setMessage(""); // Clear the input box after sending
     }
@@ -109,7 +110,7 @@ export default function ChatWindow() {
       </button>
       <div className={`chat-window ${isOpen ? "open" : "closed"}`}>
         <div className="font-bold text-lg mb-2">Virtual Assistant</div>
-        <div className="text-gray-700 mb-4">Hello, how can I help you today?</div>
+        {/* <div className="text-gray-700 mb-4">Hello, how can I help you today?</div> */}
         <div className="chat-history">
           {chatHistory.map((msg, index) => (
             <div
@@ -129,7 +130,7 @@ export default function ChatWindow() {
             onKeyDown={handleKeyDown}
             placeholder="Type your message..."
           />
-          <button onClick={() => { handleSend(); handleSubmit();  }} className="chatbox-send-button">
+          <button onClick={() => { handleSubmit();  handleSend();  }} className="chatbox-send-button">
             Send
           </button>
         </div>

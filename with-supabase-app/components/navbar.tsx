@@ -35,7 +35,7 @@ export default function Navbar() {
         }
       }
       fetchUser();
-      console.log(user);
+      // console.log(user);
     }
     ,[user]);
     const supabase = createClient();

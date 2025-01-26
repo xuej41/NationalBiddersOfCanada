@@ -30,7 +30,7 @@ export default function AuctionItems() {
             table: 'auction_items',
           },
           (payload) => {
-            console.log('Change received!', payload);
+            // console.log('Change received!', payload);
   
             // Decide how to update your local state:
             if (payload.eventType === 'INSERT') {
