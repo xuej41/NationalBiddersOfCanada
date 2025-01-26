@@ -41,7 +41,7 @@ export default async function Signup(props: {
             minLength={6}
             required
           />
-          <SubmitButton formAction={signUpAction} pendingText="Signing up...">
+          <SubmitButton className="rounded-full bg-blue-500 hover:bg-blue-700 focus:ring-1 focus:ring-blue-500 focus:ring-offset-2 transition-colors" formAction={signUpAction} pendingText="Signing up...">
             Sign up
           </SubmitButton>
           <FormMessage message={searchParams} />
