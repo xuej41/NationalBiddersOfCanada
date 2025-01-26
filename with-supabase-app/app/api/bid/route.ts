@@ -15,7 +15,7 @@ async function isValid(data : any, user_id : string ,current_date : Date, amount
         return [false, NextResponse.json({ error: 'Auction item not found' }, { status: 404 })]
     }
 
-    console.log(data.bidder, user_id)
+    // console.log(data.bidder, user_id, "this")
 
     if (data.bidder === user_id){
         return [false, NextResponse.json({ error: 'You are already the highest bidder!' }, { status: 400 })]
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest){
     // console.log(user.data.user?.id)
     
 
-    if (!user || !user.data.user?.id) {
+    if (!user || !user.data.user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -81,9 +81,10 @@ export async function POST(req: NextRequest){
     const {data : userInfo, error: userError} = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', user.data.user.id).single()
+    .eq('user_id', user.data.user.id).single()
 
     if (userError) {
+        console.error('Error fetching profile:', userError)
         return NextResponse.json({ error: userError }, { status: 500 })
     }   
 
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest){
     .from('bids')
     .insert({
       auction_item_id: reqBody.auction_item_id,
-      bidder_id: user.data.user?.id,
+      bidder_id: user.data.user.id,
       amount: reqBody.amount,
       created_at: currentDate
     })
@@ -103,7 +104,7 @@ export async function POST(req: NextRequest){
     .single()  
 
     if (error) {
-        // console.error('Error inserting bid:', error.message)
+        console.error('Error inserting bid:', error.message)
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
@@ -127,7 +128,7 @@ async function onBid(id : string, user_id : string){
     .single()
 
     if (error) {
-        // console.error('Error getting bids:', error.message)
+        console.error('Error getting bids:', error.message)
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
@@ -200,24 +201,33 @@ async function update(params : UpdateAuctionItem, id: string) {
       const bidder = auctionItem.bidder
       const current_bid = auctionItem.current_bid
       
+    console.log( "bid, bidder",current_bid, bidder)
+    let profile = {balance: 0, locked_bal: 0}
+
+
       // 1. Fetch the current balances for this user (so we know the latest values)
+      if (bidder){
       let { data: profile, error : profileFail } = await supabase
         .from('profiles')
-        .select('balance, locked_balance')
-        .eq('id', bidder)
+        .select('balance, locked_bal')
+        .eq('user_id', bidder)
         .single()
       
       if (profileFail) {
-        console.error('Error fetching profile:', profileFail)
-        return
+        console.error('Error fetching profile: 1', profileFail)
+        return NextResponse.json({ error: profileFail }, { status: 500 })
       }
       if (!profile) {
         return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
       }
       
+      console.log("profile",profile)
+      console.log(current_bid)
+    
       // 2. Calculate the new values
-      const newLocked = profile.locked_balance - current_bid
+      const newLocked = profile.locked_bal - current_bid
       const newBalance = profile.balance + current_bid
+      console.log("locked and new balance for the new profile",newLocked, newBalance)
       
       // 3. Update the profile
       let { data: updated, error: updateError } = await supabase
@@ -226,33 +236,40 @@ async function update(params : UpdateAuctionItem, id: string) {
           locked_bal: newLocked,
           balance: newBalance
         })
-        .eq('id', bidder)
+        .eq('user_id', bidder)
         .single()
       
       if (updateError) {
-        console.error('Error updating profile:', updateError)
+        console.error('Error updating profile:', updateError, bidder)
       } else {
         console.log('Profile updated:', updated)
       }
-      
+    }
       // update old profile
+      console.log(params.bidder_id)
+    if (params.bidder_id){
 
       const { data: profile2, error : profileFail2 } = await supabase
       .from('profiles')
-      .select('balance, locked_balance')
-        .eq('id', params.bidder_id).single()
+      .select('balance, locked_bal')
+        .eq('user_id', params.bidder_id).single()
     
         if (profileFail2) {
-            console.error('Error fetching profile:', profileFail2)
+            console.error('Error fetching profile:  2', profileFail2)
             return NextResponse.json({ error: profileFail2 }, { status: 500 })
         }
         if (!profile2) {
             return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
         }
+
+        if (!params.current_bid){
+            return NextResponse.json({ error: 'Current bid not found' }, { status: 404 })
+        }
     
         // 2. Calculate the new values
-        const newLocked2 = profile2.balance + auctionItem.current_bid;
-        const newBalance2 = profile2.locked_balance - auctionItem.current_bid;
+        const newBalance2 = profile2.balance - params.current_bid;
+        const newLocked2 = profile2.locked_bal + params.current_bid;
+        console.log("locked and new balance 2 for the old profile",newLocked2, newBalance2)
 
         // 3. Update the profile
         let { data: updated2, error: updateError2 } = await supabase
@@ -261,14 +278,16 @@ async function update(params : UpdateAuctionItem, id: string) {
           locked_bal: newLocked2,
           balance: newBalance2
         })
-        .eq('id', params.bidder_id)
+        .eq('user_id', params.bidder_id)
         .single()
 
         if (updateError2) {
-            console.error('Error updating profile:', updateError2)
+            console.error('Error updating profile: 2', updateError2, params.bidder_id)
         } else {
-            console.log('Profile updated:', updated2)
+            console.log('Profile updated:')
         }
+    }
+
 
 
       // 4. Perform the update
