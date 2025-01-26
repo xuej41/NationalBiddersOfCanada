@@ -4,6 +4,7 @@ import Image from 'next/image';
 import logo from '@/public/nbclogo.png'
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
+import signOut from '@/utils/supabase/signOut';
 
 interface Profile {
   balance: number;
@@ -14,6 +15,7 @@ interface Profile {
   username :string,
 
 }
+
 
 
 export default function Navbar() {
@@ -51,7 +53,7 @@ export default function Navbar() {
       if (!error && data) {
         setProfile(data);
       } else {
-        // console.error('Error fetching item:', error, data);
+        console.error('Error fetching item:', error, data);
       }
     };
 
@@ -107,7 +109,7 @@ export default function Navbar() {
             </Link>
             {!user ?<Link href="/sign-in" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
               Sign In
-            </Link> : <Link href="/sign-out" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">Sign Out</Link>}
+            </Link> : <Link href="/" onClick={  () => signOut()} className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4"> Sign Out</Link>}
             <div className="relative group inline-block">
               <Link href="#" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
                 Balance
