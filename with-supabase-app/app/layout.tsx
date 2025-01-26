@@ -7,8 +7,8 @@ const inter = Inter({ subsets: ["latin"] })
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700"]})
 
 export const metadata = {
-  title: "Bidding Platform",
-  description: "A platform for online auctions",
+  title: "National Bid Canada",
+  description: "Queen's leading live auction site",
 }
 
 export default function RootLayout({
