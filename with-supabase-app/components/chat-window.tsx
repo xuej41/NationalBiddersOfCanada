@@ -8,7 +8,6 @@ export default function ChatWindow() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [items, setItems] = useState([]);
-  const [inputText, setInputText] = useState("");
   const [openAIResponse, setOpenAIResponse] = useState<string | null>(null);
   const openai = new OpenAI({
     apiKey: process.env.NEXT_PUBLIC_OPEN_AI_KEY,
@@ -17,12 +16,6 @@ export default function ChatWindow() {
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
-  };
-
-  const handleSend = () => {
-    // Handle sending the message
-    console.log("Message sent:", message);
-    setMessage(""); // Clear the input box after sending
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
