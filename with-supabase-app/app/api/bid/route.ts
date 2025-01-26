@@ -78,6 +78,19 @@ export async function POST(req: NextRequest){
         return confirmValidity[1]
     }   
 
+    const {data : userInfo, error: userError} = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.data.user.id).single()
+
+    if (userError) {
+        return NextResponse.json({ error: userError }, { status: 500 })
+    }   
+
+    if (userInfo.balance < reqBody.amount){ 
+        return NextResponse.json({ error: 'Insufficient balance!' }, { status: 400 })
+    }
+
     const { data, error } = await supabase
     .from('bids')
     .insert({
@@ -183,7 +196,81 @@ async function update(params : UpdateAuctionItem, id: string) {
           { status: 400 }
         )
       }
-  
+
+      const bidder = auctionItem.bidder
+      const current_bid = auctionItem.current_bid
+      
+      // 1. Fetch the current balances for this user (so we know the latest values)
+      let { data: profile, error : profileFail } = await supabase
+        .from('profiles')
+        .select('balance, locked_balance')
+        .eq('id', bidder)
+        .single()
+      
+      if (profileFail) {
+        console.error('Error fetching profile:', profileFail)
+        return
+      }
+      if (!profile) {
+        return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+      }
+      
+      // 2. Calculate the new values
+      const newLocked = profile.locked_balance - current_bid
+      const newBalance = profile.balance + current_bid
+      
+      // 3. Update the profile
+      let { data: updated, error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          locked_bal: newLocked,
+          balance: newBalance
+        })
+        .eq('id', bidder)
+        .single()
+      
+      if (updateError) {
+        console.error('Error updating profile:', updateError)
+      } else {
+        console.log('Profile updated:', updated)
+      }
+      
+      // update old profile
+
+      const { data: profile2, error : profileFail2 } = await supabase
+      .from('profiles')
+      .select('balance, locked_balance')
+        .eq('id', params.bidder_id).single()
+    
+        if (profileFail2) {
+            console.error('Error fetching profile:', profileFail2)
+            return NextResponse.json({ error: profileFail2 }, { status: 500 })
+        }
+        if (!profile2) {
+            return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+        }
+    
+        // 2. Calculate the new values
+        const newLocked2 = profile2.balance + auctionItem.current_bid;
+        const newBalance2 = profile2.locked_balance - auctionItem.current_bid;
+
+        // 3. Update the profile
+        let { data: updated2, error: updateError2 } = await supabase
+        .from('profiles')
+        .update({
+          locked_bal: newLocked2,
+          balance: newBalance2
+        })
+        .eq('id', params.bidder_id)
+        .single()
+
+        if (updateError2) {
+            console.error('Error updating profile:', updateError2)
+        } else {
+            console.log('Profile updated:', updated2)
+        }
+
+
       // 4. Perform the update
       //    In a typical REST approach, the `[id]` param is the auction item ID you want to update
       const { data, error } = await supabase

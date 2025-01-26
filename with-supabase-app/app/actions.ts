@@ -20,7 +20,7 @@ export const signUpAction = async (formData: FormData) => {
     );
   }
 
-  const { error } = await supabase.auth.signUp({
+  const {data : data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -28,10 +28,38 @@ export const signUpAction = async (formData: FormData) => {
     },
   });
 
+  if (!data || !data.user) {
+    return encodedRedirect("error", "/sign-up", 'Could not sign up');
+  }
+  const id = data.user.id;
+  
   if (error) {
     console.error(error.code + " " + error.message);
     return encodedRedirect("error", "/sign-up", error.message);
   } else {
+
+    console.log(id);
+    const {data: check, error : checkError} = await supabase.from("profiles").select("*").eq("user_id", id);
+
+    if (checkError) {
+      console.error(checkError.code + " " + checkError.message);
+      return encodedRedirect("error", "/sign-up", checkError.message);
+    } 
+
+    if (check.length > 0) {
+      return encodedRedirect("error", "/sign-up", "User already exists");
+    }
+    const {data, error} = await supabase.from("profiles").insert({
+      user_id :id, 
+      username : username,
+      balance : 0,
+      locked_bal : 0,
+    });
+    if (error) {
+      console.error(error.code + " " + error.message);
+      return encodedRedirect("error", "/sign-up", error.message);
+    }
+
     return encodedRedirect(
       "success",
       "/sign-up",
