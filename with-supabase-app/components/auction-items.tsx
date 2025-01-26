@@ -112,7 +112,8 @@ export default function AuctionItems() {
                   title={item.title} 
                   description={item.description} 
                   currentBid={item.current_bid} 
-                  endTime={new Date(item.countdown)} 
+                  endTime={new Date(item.countdown)}
+                  imageUrl={item.image} 
                 /> // key, id, title, description, currentBid, endTime, imageUrl
             )) : ""}
         </div>
