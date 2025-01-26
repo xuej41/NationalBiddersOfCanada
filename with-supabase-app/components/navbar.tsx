@@ -25,7 +25,7 @@ export default function Navbar() {
               </div>
             </div>
           </Link>
-          <div className="space-x-4">
+          <div className="space-x-6">
             <Link href="/items" className="rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-8 text-gray-500 hover:underline underline-offset-4">
               View Items
             </Link>
