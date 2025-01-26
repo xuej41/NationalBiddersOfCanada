@@ -23,6 +23,9 @@ export default function ItemPage() {
   const id = useParams().id;
   const supabase = createClient();
 
+
+
+
   useEffect(() => {
     // Fetch the specific item
     const fetchItem = async () => {
@@ -71,6 +74,35 @@ export default function ItemPage() {
     };
   }, [item]);
 
+  const onPlaceBid = async (newBid: number) => {
+    if (!id || !item) return false;
+
+    try {
+      const response = await fetch("http://localhost:3000/api/bid", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          auction_item_id: id,
+          amount: newBid,
+        }),
+      });
+
+      if (response.ok) {
+        const updatedItem = await response.json();
+        setItem(updatedItem); // Update the item with the latest data
+        console.log("Bid placed successfully:", updatedItem);
+        return true
+      } else {
+        console.error("Failed to place bid:", response.statusText, await response.json());
+      }
+    } catch (error) {
+      console.error("Error placing bid:", error);
+    }
+  };
+
+
   if (!item) {
     return <div>Loading...</div>;
   }
@@ -96,7 +128,7 @@ export default function ItemPage() {
               <div className="mb-4">
                 <CountdownTimer targetDate={ new Date(item.countdown)}  />
               </div>
-              <BiddingForm currentBid={item.current_bid} minIncrement={5} onPlaceBid={()=>{}} />
+              <BiddingForm currentBid={item.current_bid} minIncrement={5} onPlaceBid={onPlaceBid} />
             </>
           ) : (
             <div className="text-2xl font-bold text-green-600">Auction Ended</div>

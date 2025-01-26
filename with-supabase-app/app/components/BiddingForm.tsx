@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 interface BiddingFormProps {
   currentBid: number
   minIncrement: number
-  onPlaceBid: (amount: number) => void
+  onPlaceBid: (amount: number) => boolean
 }
 
 export default function BiddingForm({ currentBid, minIncrement, onPlaceBid }: BiddingFormProps) {
@@ -15,7 +15,10 @@ export default function BiddingForm({ currentBid, minIncrement, onPlaceBid }: Bi
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onPlaceBid(bidAmount)
+    if (onPlaceBid(bidAmount)){
+      setBidAmount(currentBid + minIncrement)
+    }
+    
   }
 
   return (

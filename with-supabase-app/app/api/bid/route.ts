@@ -60,7 +60,7 @@ export async function POST(req: NextRequest){
     }
 
     const reqBody = (await req.json()) as createBid
-
+    console.log(reqBody)
     if (!reqBody.auction_item_id){
         return NextResponse.json({ error: 'Auction item id is required' }, { status: 400 })
     }   
