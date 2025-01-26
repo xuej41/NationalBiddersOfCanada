@@ -12,6 +12,7 @@ export default function ChatWindow() {
   const [openAIResponse, setOpenAIResponse] = useState<string | null>(null);
   const openai = new OpenAI({
     apiKey: process.env.NEXT_PUBLIC_OPEN_AI_KEY,
+    dangerouslyAllowBrowser: true
   });
 
   const toggleChat = () => {
@@ -89,7 +90,7 @@ export default function ChatWindow() {
             onKeyDown={handleKeyDown}
             placeholder="Type your message..."
           />
-          <button onClick={handleSend} className="chatbox-send-button">
+          <button onClick={handleSubmit} className="chatbox-send-button">
             Send
           </button>
         </div>
