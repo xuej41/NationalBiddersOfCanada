@@ -293,6 +293,7 @@ async function update(params : UpdateAuctionItem, id: string) {
     }
 
 
+    // console.log("HELLO THIS POINT WORKS")
 
       // 4. Perform the update
       //    In a typical REST approach, the `[id]` param is the auction item ID you want to update

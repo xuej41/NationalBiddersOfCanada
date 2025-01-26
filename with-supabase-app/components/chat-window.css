@@ -2,8 +2,8 @@
     position: fixed;
     bottom: 120px;
     right: 4px;
-    width: 20rem;
-    height: 400px;
+    width: 25rem;
+    height: 500px;
     background-color: white;
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
@@ -15,7 +15,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    font-size: 0.85rem;
+    font-size: 1rem;
   }
 
   .chat-window.open {

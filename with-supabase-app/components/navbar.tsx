@@ -51,7 +51,7 @@ export default function Navbar() {
       if (!error && data) {
         setProfile(data);
       } else {
-        console.error('Error fetching item:', error, data);
+        // console.error('Error fetching item:', error, data);
       }
     };
 

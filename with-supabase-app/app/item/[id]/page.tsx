@@ -1,28 +1,19 @@
-"use client"
-import React, { useState, useEffect } from "react"
-import Image from "next/image"
-import CountdownTimer from "@/app/components/CountdownTimer"
-import BiddingForm from "@/app/components/BiddingForm"
+"use client";
+import React, { useState, useEffect } from "react";
+import CountdownTimer from "@/app/components/CountdownTimer";
+import BiddingForm from "@/app/components/BiddingForm";
 import { createClient } from "@/utils/supabase/client";
-import { useParams } from "next/navigation"
+import { useParams } from "next/navigation";
+import Image from 'next/image';
 
 
-
-// This data would typically come from your backend based on the item ID
-// const getItemData = (id: string) => ({
-//     id,
-//     title: "Vintage Watch",
-//     description: "A beautiful vintage watch from the 1950s",
-//     currentBid: 100,
-//     endTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
-//     imageUrl: "/images/placeholder.jpg",
-//   });
 export default function ItemPage() {
   const [item, setItem] = useState<any>(null); // Store a single item
   const [auctionEnded, setAuctionEnded] = useState(false);
   const id = useParams().id;
   const supabase = createClient();
   const [user, setUser] = useState<any>(null);
+  const [bids, setBids] = useState<any[]>([]);
 
 
 
@@ -41,11 +32,27 @@ export default function ItemPage() {
   }
   ,[user]);
 
+  useEffect(()=> {
+    const fetchBids = async () => {
+      const { data, error } = await supabase
+        .from('bids')
+        .select('*')
+        .eq('auction_item_id', id)
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setBids(data);
+      } else {
+        console.error('Error fetching bids:', error, data);
+      }
+    }
+    fetchBids();
+  }
+  ,[item]);
+
 
 
   useEffect(() => {
-
-
     // Fetch the specific item
     const fetchItem = async () => {
       const { data, error } = await supabase
@@ -130,32 +137,62 @@ export default function ItemPage() {
     <div className="container mx-auto py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          {/* <Image
-            src={item.imageUrl || "/images/placeholder.jpg"}
-            alt={item.title}
-            width={600}
-            height={400}
-            className="w-full object-cover rounded-lg"
-          /> */}
+        <Image src={item.image} alt="NBC Logo" width={600} height={500} />
+
+
+
         </div>
+
         <div>
-          {item.owner == user ? <h1 className="text-3xl mb-4">This is YOUR Auction!</h1> : ""}
+          {item.owner == user && (
+            <h1 className="text-3xl mb-4">This is YOUR Auction!</h1>
+          )}
           <h1 className="text-3xl mb-4">{item.title}</h1>
           <p className="text-gray-600 mb-4">{item.description}</p>
-          <div className="text-xl font-semibold mb-4">Current Bid: ${item.current_bid} </div>
-          <div className="text-xl font-semibold mb-4" >{item.bidder == user ? " You are leading!" : ""}</div>
+          <div className="text-xl font-semibold mb-1">
+            Current Bid: ${item.current_bid}
+          </div>
+          {item.starting_bid ? <div className="text-l text-gray-600 font-semibold">{ "Starting bid: " + item.starting_bid }</div> : ""}
+          {item.min_increase ? <div className="text-l text-gray-600 font-semibold mb-2">{ "Minimum Increase: " + item.min_increase }</div> : ""}
+          <div className="text-xl font-semibold mb-4">
+            {item.bidder == user ? "You are leading!" : ""}
+          </div>
           {!auctionEnded ? (
             <>
               <div className="mb-4">
-                <CountdownTimer targetDate={ new Date(item.countdown)}  />
+                <CountdownTimer targetDate={new Date(item.countdown)} />
               </div>
-              <BiddingForm currentBid={item.current_bid} minIncrement={5} onPlaceBid={onPlaceBid} />
+              <BiddingForm
+                currentBid={item.current_bid}
+                minIncrement={5}
+                onPlaceBid={onPlaceBid}
+              />
             </>
           ) : (
-            <div className="text-2xl font-bold text-green-600">Auction Ended</div>
+            <div className="text-2xl font-bold text-green-600">
+              Auction Ended
+            </div>
           )}
+
+          {/* Display the list of bids (JSON) for debugging or record keeping */}
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-2">All Bids</h2>
+            {bids.length > 0 ? (
+              <ul className="space-y-2">
+                {bids.map((bid) => (
+                  <li key={bid.id} className="border p-2 rounded">
+                    <p>Bid Amount: ${bid.amount}</p>
+                    <p>Bidder: {bid.bidder_id}</p>
+                    <p>Time: {bid.created_at}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No bids yet.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

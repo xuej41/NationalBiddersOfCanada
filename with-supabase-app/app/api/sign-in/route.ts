@@ -1,12 +1,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
 
 
 import { encodedRedirect } from "@/utils/utils";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 

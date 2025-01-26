@@ -29,7 +29,7 @@ export default function BiddingForm({ currentBid, minIncrement, onPlaceBid }: Bi
         <Input
           type="number"
           value={bidAmount}
-          onChange={(e) => setBidAmount(Math.max(currentBid + minIncrement, Number.parseFloat(e.target.value)))}
+          onChange={(e) => setBidAmount( Number.parseFloat(e.target.value))}
           min={currentBid + minIncrement}
           step={minIncrement}
           className="w-full"
