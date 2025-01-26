@@ -1,0 +1,56 @@
+.chat-window {
+    position: fixed;
+    bottom: 120px;
+    right: 4px;
+    width: 20rem;
+    height: 400px;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  }
+
+  .chat-window.open {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  
+  .chat-window.closed {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  .chatbox-container {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+  }
+  
+  .chatbox-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+    width: 100%; /* Make this value anything and it works for some reason */
+  }
+  
+  .chatbox-send-button {
+    padding: 0.5rem 1rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  
+  .chatbox-send-button:hover {
+    background-color: #2563eb;
+  }
