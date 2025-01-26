@@ -52,7 +52,7 @@ export const signUpAction = async (formData: FormData) => {
     const {data, error} = await supabase.from("profiles").insert({
       user_id :id, 
       username : username,
-      balance : 0,
+      balance : 50000,
       locked_bal : 0,
     });
     if (error) {
