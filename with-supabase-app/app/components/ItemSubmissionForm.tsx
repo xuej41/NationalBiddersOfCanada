@@ -34,7 +34,7 @@ export default function ItemSubmissionForm() {
     starting_price: 0,
     end_time: "",
     min_increase: 0,
-    images: [] as File[],
+    images: null as File | null,
   });
 
   const handleChange = (
@@ -48,10 +48,10 @@ export default function ItemSubmissionForm() {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files[0]) {
       setFormData((prev) => ({
         ...prev,
-        images: Array.from(e.target.files),
+        image: e.target.files[0],
       }));
     }
   };
@@ -66,7 +66,7 @@ export default function ItemSubmissionForm() {
         starting_price: formData.starting_price,
         end_time: formData.end_time,
         min_increase: formData.min_increase,
-        image: await convertImageToBase64(formData.images[0]),
+        image: formData.image ? await convertImageToBase64(formData.image) : null,
       };
       console.log("Submitting item:", backendData);
   
@@ -78,9 +78,10 @@ export default function ItemSubmissionForm() {
         body: JSON.stringify(backendData),
       });
   
-      if (!response.ok) {
-        console.log("Error submitting item:", response);
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (response.ok) {
+        console.log("Item submitted successfully");
+      } else {
+        console.error("Error submitting item");
       }
   
       const result = await response.json();
@@ -92,7 +93,7 @@ export default function ItemSubmissionForm() {
         starting_price: 0,
         end_time: "",
         min_increase: 0,
-        images: [],
+        images: null as File | null,
       });
     } catch (error) {
       console.error("Error submitting item:", error);
