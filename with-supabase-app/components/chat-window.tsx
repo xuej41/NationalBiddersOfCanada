@@ -1,11 +1,18 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import "./chat-window.css";
+import OpenAI from "openai";
 
 export default function ChatWindow() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [items, setItems] = useState([]);
+  const [inputText, setInputText] = useState("");
+  const [openAIResponse, setOpenAIResponse] = useState<string | null>(null);
+  const openai = new OpenAI({
+    apiKey: process.env.NEXT_PUBLIC_OPEN_AI_KEY,
+  });
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
@@ -22,6 +29,45 @@ export default function ChatWindow() {
       handleSend();
     }
   };
+
+  const getItems = async () => {
+        try {
+          const response = await fetch("http://localhost:3000/api/auction_items", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          setItems(data);
+        } catch (error) {
+          console.error("Error initiating call: ", error);
+        }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const openAIResponse = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You are a helpful assistant for recommending the best auction item to the user based on a list of auctioned items and the requirements they asked for." },
+          {
+            role: "user",
+            content: `Recommend the best auction item for me. I want something that is ${inputText}. These are the items for auction: ${JSON.stringify(items)}, return the best item for me and its id.`,
+          },
+        ],
+      });
+      const openAIData = openAIResponse.choices[0].message.content;
+      setOpenAIResponse(openAIData);
+      console.log("OpenAI Response: ", openAIData);
+    } catch (error) {
+      console.error("Error calling OpenAI: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getItems();
+  }, []);
 
   return (
     <>
