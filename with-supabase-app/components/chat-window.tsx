@@ -1,12 +1,41 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ChatWindow() {
   const [isOpen, setIsOpen] = useState(false);
+  const [items, setItems] = useState([]);
+  const [inputText, setInputText] = useState("");
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
   };
+
+  const getItems = async () => {
+        try {
+          const response = await fetch("http://localhost:3000/api/auction_items", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          setItems(data);
+        } catch (error) {
+          console.error("Error initiating call: ", error);
+        }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      
+    } catch (error) {
+      console.error("Error sending message: ", error);
+    }
+  }
+
+  useEffect(() => {
+    getItems();
+  }, []);
 
   return (
     <>
