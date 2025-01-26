@@ -27,7 +27,7 @@ export default function ChatWindow() {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleSend();
+      handleSubmit();
     }
   };
 
@@ -48,13 +48,14 @@ export default function ChatWindow() {
 
   const handleSubmit = async () => {
     try {
+      console.log(message);
       const openAIResponse = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
           { role: "system", content: "You are a helpful assistant for recommending the best auction item to the user based on a list of auctioned items and the requirements they asked for." },
           {
             role: "user",
-            content: `Recommend the best auction item for me. I want something that is ${inputText}. These are the items for auction: ${JSON.stringify(items)}, return the best item for me and its id.`,
+            content: `Recommend the best auction item for me. I want something that is ${message}. These are the items for auction: ${JSON.stringify(items)}, return the best item for me and its id.`,
           },
         ],
       });
