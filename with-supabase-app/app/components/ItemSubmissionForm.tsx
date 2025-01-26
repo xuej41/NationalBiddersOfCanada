@@ -162,7 +162,7 @@ export default function ItemSubmissionForm() {
           multiple
         />
       </div>
-      <Button type="submit">Submit Item</Button>
+      <Button type="submit" className="focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-full transition-colors duration-300 hover:bg-gray-500">Submit Item</Button>
     </form>
   );
 }
