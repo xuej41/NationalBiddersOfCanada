@@ -1,4 +1,7 @@
 # National Bidders Of Canada
+
+[![Watch the video](/with-supabase-app/public/thumbnail.PNG)](https://youtu.be/vt5fpE0bzSY)
+
 ## 💡 Inspiration
 With a thriving market valued at nearly [$20 billion](https://www.businessresearchinsights.com/market-reports/online-auction-market-103291), our vision is to connect millions globally through a dynamic live auction platform, empowering sellers and buyers to achieve growth and success anytime, anywhere.
 
